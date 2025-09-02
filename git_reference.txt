@@ -1,0 +1,124 @@
+<!!!LOW-LEVEL COMMANDS!!!>
+
+* git config --global user.name/user.email/init.default <entry>
+	entry optional if you just want to see current value
+* git <command> -h for help
+	Alt: git help <command>
+
+* git status
+* git diff for difference between working copy and staged copy
+	git diff --cached / get diff --staged for difference between staged and HEAD copy
+* .gitignore file
+
+* git init
+* git add <file> to track
+	--all / -A / . in place of <file> to track all
+* git rm --cached <file> to untrack by removing it from the staging
+	git rm <file> simply removes working copy of file
+* git restore --staged <file> to revert staged file to the current HEAD commit version
+	git restore --worktree <file> to revert working file to the current HEAD commit version (default functionality without modifiers)
+	Can combine --worktree and --staged to copy the HEAD version into both of those versions
+	git reset <file> does the same thing as --staged version
+* git mv <source> ... <existing directory> to move sources to existing directory
+	git mv <old_name> <new_name> to rename old_name to new_name (cannot be other file with same name as new_name in working directory)
+* git commit -m "message"
+	git commit -a -m "message" to commit working files without staging
+	git commit -m "message" --amend to ammend last commit message
+
+* git log shows previous commits
+	git log --oneline shows each commit on a single line
+	git log -p to see changes in each commit
+
+
+
+
+<!!!HIGH-LEVEL COMMANDS!!!>
+
+* git branch <name> to make a new branch on current commit
+	git branch on its own tells you the current branch and what other branches there are
+	git branch -d <branch> to delete <branch>
+* git checkout <name> to move to existing branch
+	git checkout -b <name> to make a new branch and move to it at the same time
+	git switch does basically the same thing as checkout (uses -c instead of -b)
+
+* HEAD is the current selected commit
+* git checkout <commit_id> moves HEAD to specific commit regardless of branches
+* git checkout <branch/HEAD>^ moves HEAD to one commit up of <branch/HEAD>
+	*git checkout <branch/HEAD>^n moves HEAD to the nth parent of <branch/HEAD> if merging occured at <branch/HEAD>
+* git checkout <branch/HEAD>~n moves HEAD to n commits up of <branch/HEAD>
+* ^ & ~ can be chained together
+* git branch -f <other_branch> <location> forces <other_branch> to <location>
+	Cannot execute this command while in <other_branch>
+	<location> can be relative or a commit id
+
+*git merge <other_branch> to merge <other_branch> onto <current_branch>
+	Includes all parent commits of <other_branch> in <current_branch> w/o modifying <other_branch>
+	Afterwards, move to <other_branch> and run git merge <current_branch> to move <other_branch> up to <current_branch>
+	git merge -m "message" <other_branch> to include a message with a merge
+* git rebase <other_branch> to combine <current_branch> onto <other_branch> sequentially
+	Copies all commits of <current_branch> onto end of <other_branch> up to point of divergence
+	Will not copy over commits of <current_branch> that exist in <other_branch> even in copied form
+	Moves <current_branch> to the end of the copied commits while leaving <other_branch> alone
+	Afterwards, move to <other_branch> and run git rebase <current_branch> to move <other_branch> up to <current_branch>
+	Original <other_branch> commits still exist
+	git rebase <branch1> <branch2> to rebase <branch2> onto <branch1>
+* git rebase -i <location> to interactively rebase by selecting and rearranging commits
+	Shows which commits are available to you if you aren't sure which ones you want or what their id's are
+	Can choose from commits that are both children of <location> and parents of <current_branch> (including <current_branch>)
+	Sticks specified commits onto end of <location> in order specified
+	git rebase -i --root sets <location> equal to the very first commit (root commit)
+* git cherry-pick <commit_1> <commit_2> ... to add copies of listed commits below HEAD
+
+* git reset <location> to move <current_branch> back to <location> (commit id or relative)
+	Pretends downstream commits don't exist after location
+	Only works for local repos, not remote/shared repos
+* git revert <location> to undo the effects of commit at <location> (commit id or relative)
+	Copies parent of commit at <location> and commits it at the end of <current_branch>
+	Works for remote/shared repos
+
+* git tag <name> <location> to create a permanent reference milestone (tag) at a specific commit
+* git describe <location> to locate <location> with respect to the nearest parent tag
+	Does so in the format: <tag>_<num_commits_away>_g<location_commit_hash>
+
+
+
+
+<!!!REMOTE COMMANDS!!!>
+
+* TO PUSH A REPOSITORY FOR THE FIRST TIME:
+git remote add origin <link>
+git branch -M main
+git push -u origin main
+
+* git clone to copy remote repo to local repo
+
+* git remote add <origin> <link> to add an origin linking the local repo to a remote repo
+* git branch -M <branch> to establish target branch
+
+* git push <branch> to push <branch> to remote branch and sync with remote repo
+* git push --all to push all branches
+* git push <origin> <branch> to push local <branch> to remote <origin>/<branch> regardless of current branch
+	Will make new <origin>/<branch> if it doesn't already exist, useful if pushing for the first time
+* git push <origin> <source>:<destination> to push local <source> location to remote <destination> branch
+	Will make new remote <destination> branch if it doesn't already exist
+* git push <origin> :<destination> to delete <destination> branch (pushing nothing to it)
+
+* git fetch to download commits from all branches from remote repo and update remote branches
+	Syncs local representation of remote repo with what it actually looks like right now
+	git merge <origin>/<branch> to then merge remote <origin>/<branch> into local <branch>
+	Can also git rebase <origin>/<branch> or git cherry-pick <origin>/<branch> as usual
+* git fetch <origin> <location> to download the commits from the remote <location> to <origin>/<location>
+* git fetch <origin> <source>:<destination> to download from <source> location on remote repo directly to <destination> (can be an ordinary local branch)
+	Will make new local <destination> branch if it doesn't already exist
+* git fetch <origin> :<destination> to make a new destination branch if it doesn't already exist
+
+* git pull to do git fetch and merge whatever branch(es) it just downloaded in one command
+	git pull --rebase does the same but rebases the branch(es) intsead of merging
+* git pull <origin> <location> to git fetch <origin> <location> and then git merge <origin>/<location>
+* git pull <origin> <source>:<destination> to fetch <origin> <source>:<destination> and then git merge <destination>
+	Will make new local <destination> branch if it doesn't already exist
+* git pull <origin> :<destination> to make a new destination branch if it doesn't already exist (git pull <origin> :destination>) and then merge it into current branch
+
+* git checkout -b <local_branch> <origin>/<remote_branch> to create a new branch <local_branch> set to track existing <origin>/<remote_branch>
+* git branch -u <origin>/<remote_branch> to set <current_branch> to track <origin>/<remote_branch>
+* git branch -u <origin>/<remote_branch> <local_branch> to set <local_branch> to track <origin>/<remote_branch>
