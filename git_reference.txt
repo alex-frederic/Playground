@@ -7,7 +7,7 @@
 
 * git status
 * git diff for difference between working copy and staged copy
-	git diff --cached / get diff --staged for difference between staged and HEAD copy
+	git diff --cached / git diff --staged for difference between staged and HEAD copy
 * .gitignore file
 
 * git init
