@@ -14,10 +14,10 @@
 * git add <file> to track
 	--all / -A / . in place of <file> to track all
 * git rm --cached <file> to untrack by removing it from the staging
-	git rm <file> simply removes working copy of file
+	git rm <file> simply removes working copy of file (-f necessary if changes from HEAD in staged or working versions of <file>)
 * git restore --staged <file> to revert staged file to the current HEAD commit version
-	git restore --worktree <file> to revert working file to the current HEAD commit version (default functionality without modifiers)
-	Can combine --worktree and --staged to copy the HEAD version into both of those versions
+	git restore --worktree <file> to revert working file to the current staged version (default functionality without modifiers)
+	Can combine --worktree and --staged (in either order) to copy the HEAD version into both of those versions
 	git reset <file> does the same thing as --staged version
 * git mv <source> ... <existing directory> to move sources to existing directory
 	git mv <old_name> <new_name> to rename old_name to new_name (cannot be other file with same name as new_name in working directory)
